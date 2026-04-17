@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Plan 10km — Clarisse</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --card: #1e1e24;
+    --border: #2a2a35;
+    --accent: #e8ff47;
+    --accent2: #ff6b47;
+    --accent3: #47b8ff;
+    --text: #f0f0f5;
+    --muted: #7a7a9a;
+    --done: #2a3a1a;
+    --done-border: #5a8a2a;
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘DM Sans’, sans-serif;
+min-height: 100vh;
+padding-bottom: 40px;
+}
+
+header {
+background: var(–surface);
+border-bottom: 1px solid var(–border);
+padding: 24px 20px 20px;
+position: sticky;
+top: 0;
+z-index: 100;
+}
+
+.header-top {
+display: flex;
+justify-content: space-between;
+align-items: flex-start;
+margin-bottom: 16px;
+}
+
+.title-block h1 {
+font-family: ‘Syne’, sans-serif;
+font-size: 22px;
+font-weight: 800;
+color: var(–accent);
+letter-spacing: -0.5px;
+}
+
+.title-block p {
+font-size: 12px;
+color: var(–muted);
+font-family: ‘DM Mono’, monospace;
+margin-top: 2px;
+}
+
+.race-countdown {
+background: var(–accent);
+color: #000;
+padding: 8px 14px;
+border-radius: 8px;
+text-align: center;
+}
+
+.race-countdown .days {
+font-family: ‘Syne’, sans-serif;
+font-size: 24px;
+font-weight: 800;
+line-height: 1;
+}
+
+.race-countdown .label {
+font-size: 9px;
+font-weight: 500;
+letter-spacing: 1px;
+text-transform: uppercase;
+opacity: 0.7;
+}
+
+.progress-bar-wrap {
+background: var(–border);
+border-radius: 4px;
+height: 6px;
+overflow: hidden;
+}
+
+.progress-bar-fill {
+height: 100%;
+background: linear-gradient(90deg, var(–accent), var(–accent2));
+border-radius: 4px;
+transition: width 0.5s ease;
+}
+
+.progress-label {
+display: flex;
+justify-content: space-between;
+font-size: 11px;
+color: var(–muted);
+font-family: ‘DM Mono’, monospace;
+margin-top: 6px;
+}
+
+.stats-row {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 10px;
+padding: 16px 20px;
+}
+
+.stat-card {
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 12px;
+padding: 14px 10px;
+text-align: center;
+}
+
+.stat-card .val {
+font-family: ‘Syne’, sans-serif;
+font-size: 20px;
+font-weight: 800;
+}
+
+.stat-card .lbl {
+font-size: 10px;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+margin-top: 3px;
+}
+
+.section-title {
+font-family: ‘Syne’, sans-serif;
+font-size: 11px;
+font-weight: 700;
+letter-spacing: 2px;
+text-transform: uppercase;
+color: var(–muted);
+padding: 0 20px;
+margin: 6px 0 10px;
+}
+
+.week-block {
+margin: 0 12px 12px;
+border-radius: 14px;
+overflow: hidden;
+border: 1px solid var(–border);
+background: var(–card);
+}
+
+.week-header {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 14px 16px;
+cursor: pointer;
+user-select: none;
+-webkit-user-select: none;
+}
+
+.week-header.current {
+background: rgba(232, 255, 71, 0.06);
+border-left: 3px solid var(–accent);
+}
+
+.week-header.done-week {
+opacity: 0.6;
+}
+
+.week-left {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.week-num {
+font-family: ‘DM Mono’, monospace;
+font-size: 11px;
+color: var(–muted);
+min-width: 28px;
+}
+
+.week-title-text {
+font-family: ‘Syne’, sans-serif;
+font-size: 14px;
+font-weight: 700;
+}
+
+.week-dates {
+font-size: 11px;
+color: var(–muted);
+font-family: ‘DM Mono’, monospace;
+margin-top: 1px;
+}
+
+.week-right {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.week-badge {
+font-size: 10px;
+padding: 3px 9px;
+border-radius: 20px;
+font-weight: 500;
+font-family: ‘DM Mono’, monospace;
+}
+
+.badge-volume {
+background: rgba(71, 184, 255, 0.15);
+color: var(–accent3);
+}
+
+.badge-taper {
+background: rgba(232, 255, 71, 0.15);
+color: var(–accent);
+}
+
+.badge-current {
+background: var(–accent);
+color: #000;
+font-weight: 700;
+}
+
+.badge-test {
+background: rgba(255, 107, 71, 0.2);
+color: var(–accent2);
+}
+
+.chevron {
+color: var(–muted);
+font-size: 12px;
+transition: transform 0.25s;
+}
+
+.week-body {
+display: none;
+border-top: 1px solid var(–border);
+}
+
+.week-body.open {
+display: block;
+}
+
+.session-row {
+display: flex;
+align-items: flex-start;
+gap: 12px;
+padding: 12px 16px;
+border-bottom: 1px solid var(–border);
+cursor: pointer;
+transition: background 0.15s;
+}
+
+.session-row:last-child {
+border-bottom: none;
+}
+
+.session-row:active {
+background: rgba(255,255,255,0.03);
+}
+
+.session-row.completed {
+background: var(–done);
+}
+
+.session-checkbox {
+width: 22px;
+height: 22px;
+border-radius: 50%;
+border: 2px solid var(–border);
+flex-shrink: 0;
+display: flex;
+align-items: center;
+justify-content: center;
+margin-top: 1px;
+transition: all 0.2s;
+font-size: 11px;
+}
+
+.session-row.completed .session-checkbox {
+background: var(–done-border);
+border-color: var(–done-border);
+color: #fff;
+}
+
+.session-content {
+flex: 1;
+}
+
+.session-day {
+font-size: 10px;
+font-family: ‘DM Mono’, monospace;
+color: var(–muted);
+text-transform: uppercase;
+letter-spacing: 0.5px;
+}
+
+.session-name {
+font-size: 14px;
+font-weight: 500;
+margin: 2px 0;
+line-height: 1.3;
+}
+
+.session-row.completed .session-name {
+text-decoration: line-through;
+opacity: 0.6;
+}
+
+.session-detail {
+font-size: 12px;
+color: var(–muted);
+line-height: 1.4;
+}
+
+.session-type-dot {
+width: 8px;
+height: 8px;
+border-radius: 50%;
+flex-shrink: 0;
+margin-top: 7px;
+}
+
+.dot-run { background: var(–accent); }
+.dot-tempo { background: var(–accent2); }
+.dot-interval { background: var(–accent3); }
+.dot-gym { background: #a47bff; }
+.dot-rest { background: var(–muted); }
+.dot-race { background: #ff4747; }
+
+.legend {
+display: flex;
+gap: 14px;
+flex-wrap: wrap;
+padding: 0 20px;
+margin-bottom: 16px;
+}
+
+.legend-item {
+display: flex;
+align-items: center;
+gap: 5px;
+font-size: 11px;
+color: var(–muted);
+}
+
+.legend-dot {
+width: 7px;
+height: 7px;
+border-radius: 50%;
+}
+
+.tips-block {
+margin: 0 12px 20px;
+background: var(–card);
+border: 1px solid var(–border);
+border-radius: 14px;
+padding: 16px;
+}
+
+.tips-block h3 {
+font-family: ‘Syne’, sans-serif;
+font-size: 13px;
+font-weight: 700;
+color: var(–accent);
+margin-bottom: 10px;
+letter-spacing: 0.5px;
+}
+
+.tip-item {
+display: flex;
+gap: 10px;
+margin-bottom: 8px;
+font-size: 13px;
+line-height: 1.4;
+color: var(–text);
+}
+
+.tip-item:last-child { margin-bottom: 0; }
+
+.tip-icon { flex-shrink: 0; }
+
+.race-card {
+margin: 0 12px 20px;
+background: linear-gradient(135deg, #1a1a10, #1e200a);
+border: 2px solid var(–accent);
+border-radius: 14px;
+padding: 20px;
+text-align: center;
+}
+
+.race-card .race-emoji { font-size: 32px; margin-bottom: 8px; }
+.race-card h2 {
+font-family: ‘Syne’, sans-serif;
+font-size: 20px;
+font-weight: 800;
+color: var(–accent);
+}
+.race-card p { font-size: 13px; color: var(–muted); margin-top: 4px; }
+
+.reset-btn {
+display: block;
+margin: 0 auto 10px;
+background: transparent;
+border: 1px solid var(–border);
+color: var(–muted);
+padding: 8px 18px;
+border-radius: 20px;
+font-size: 11px;
+font-family: ‘DM Mono’, monospace;
+cursor: pointer;
+letter-spacing: 0.5px;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="header-top">
+    <div class="title-block">
+      <h1>10KM — 28 JUIN</h1>
+      <p>Objectif : 6'00/km · 1h00'00</p>
+    </div>
+    <div class="race-countdown">
+      <div class="days" id="countdown">—</div>
+      <div class="label">jours</div>
+    </div>
+  </div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+  </div>
+  <div class="progress-label">
+    <span id="progressText">0 séances</span>
+    <span id="progressPct">0%</span>
+  </div>
+</header>
+
+<div class="stats-row">
+  <div class="stat-card">
+    <div class="val" style="color:var(--accent)" id="statDone">0</div>
+    <div class="lbl">Complétées</div>
+  </div>
+  <div class="stat-card">
+    <div class="val" style="color:var(--accent3)" id="statRuns">0</div>
+    <div class="lbl">Courses</div>
+  </div>
+  <div class="stat-card">
+    <div class="val" style="color:var(--accent2)" id="statKm">0</div>
+    <div class="lbl">km prévus</div>
+  </div>
+</div>
+
+<div class="section-title">Légende</div>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot dot-run"></div> Endurance</div>
+  <div class="legend-item"><div class="legend-dot dot-tempo"></div> Tempo</div>
+  <div class="legend-item"><div class="legend-dot dot-interval"></div> Fractions</div>
+  <div class="legend-item"><div class="legend-dot dot-gym"></div> Salle</div>
+  <div class="legend-item"><div class="legend-dot dot-rest"></div> Repos</div>
+</div>
+
+<div class="section-title">Programme</div>
+<div id="weeks-container"></div>
+
+<div class="section-title">Conseils clés</div>
+<div class="tips-block">
+  <h3>⚡ À garder en tête</h3>
+  <div class="tip-item"><span class="tip-icon">🐢</span><span>Les séances faciles doivent VRAIMENT être faciles. Tu dois pouvoir parler sans être essoufflée.</span></div>
+  <div class="tip-item"><span class="tip-icon">🏋️</span><span>Évite les séances jambes lourdes dans les 48h avant une course clé.</span></div>
+  <div class="tip-item"><span class="tip-icon">📊</span><span>Semaine 8 : le test 8km est crucial. Il valide ta progression vers le 6'00/km.</span></div>
+  <div class="tip-item"><span class="tip-icon">🏁</span><span>Jour J : pars à 6'05/km les 3 premiers km. Accélère seulement à partir du km 6.</span></div>
+</div>
+
+<div class="race-card">
+  <div class="race-emoji">🏆</div>
+  <h2>10KM — SAMEDI 28 JUIN</h2>
+  <p>Départ conservateur · Accélération finale · Objectif 1h00'00</p>
+</div>
+
+<button class="reset-btn" onclick="resetAll()">↺ Réinitialiser la progression</button>
+
+<script>
+const RACE_DATE = new Date('2026-06-28');
+const STORAGE_KEY = 'plan10km_progress';
+
+const weeks = [
+  {
+    id: 'w1',
+    num: 1,
+    title: 'Vacances — Mise en route',
+    dates: '15–20 avr',
+    badge: 'vacances',
+    current: false,
+    sessions: [
+      { id: 'w1s1', day: 'Mar 15 avr', name: 'Footing facile', detail: '30 min à 7\'00–7\'15/km · ~4.5km · Rythme conversation', type: 'run', km: 4.5 },
+      { id: 'w1s2', day: 'Mer 16 avr', name: 'Jambes — Salle', detail: 'Squats, presse, fentes, mollets', type: 'gym' },
+      { id: 'w1s3', day: 'Jeu 17 avr', name: 'Repos', detail: 'Départ vacances 🌴', type: 'rest' },
+      { id: 'w1s4', day: 'Ven 18 avr', name: 'Fractions tempo', detail: '4×5 min à 6\'30/km + 2\' marche récup · ~5km', type: 'tempo', km: 5 },
+      { id: 'w1s5', day: 'Sam 19 avr', name: 'Footing continu', detail: '35 min à 7\'00/km · ~5km', type: 'run', km: 5 },
+      { id: 'w1s6', day: 'Dim 20 avr', name: 'Salle ou repos', detail: 'Selon les jambes 💆', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w2', num: 2, title: 'Construction I', dates: '21–27 avr', badge: '~18km',
+    sessions: [
+      { id: 'w2s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w2s2', day: 'Mar', name: 'Endurance fondamentale', detail: '40 min à 7\'00/km · ~5.7km', type: 'run', km: 5.7 },
+      { id: 'w2s3', day: 'Mer', name: 'Jambes — Salle', detail: 'Séance complète jambes', type: 'gym' },
+      { id: 'w2s4', day: 'Jeu', name: 'Fractions VMA', detail: '6×400m à 5\'40/km + 90\' récup · ~5km total', type: 'interval', km: 5 },
+      { id: 'w2s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w2s6', day: 'Sam', name: 'Tempo allure cible', detail: '3×10 min à 6\'20/km + 3\' récup · ~7km total', type: 'tempo', km: 7 },
+      { id: 'w2s7', day: 'Dim', name: 'Jambes — Salle', detail: 'Ou repos selon énergie', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w3', num: 3, title: 'Construction II', dates: '28 avr–4 mai', badge: '~20km',
+    sessions: [
+      { id: 'w3s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w3s2', day: 'Mar', name: 'Endurance fondamentale', detail: '45 min à 7\'00/km · ~6.4km', type: 'run', km: 6.4 },
+      { id: 'w3s3', day: 'Mer', name: 'Jambes — Salle', type: 'gym' },
+      { id: 'w3s4', day: 'Jeu', name: 'Fractions VMA', detail: '5×600m à 5\'40/km + 90\' récup · ~5.5km', type: 'interval', km: 5.5 },
+      { id: 'w3s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w3s6', day: 'Sam', name: 'Tempo allure cible', detail: '3×12 min à 6\'15/km + 3\' récup · ~8km', type: 'tempo', km: 8 },
+      { id: 'w3s7', day: 'Dim', name: 'Jambes — Salle', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w4', num: 4, title: 'Construction III', dates: '5–11 mai', badge: '~22km',
+    sessions: [
+      { id: 'w4s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w4s2', day: 'Mar', name: 'Endurance fondamentale', detail: '50 min à 6\'55/km · ~7.2km', type: 'run', km: 7.2 },
+      { id: 'w4s3', day: 'Mer', name: 'Jambes — Salle', type: 'gym' },
+      { id: 'w4s4', day: 'Jeu', name: 'Fractions VMA', detail: '6×600m à 5\'35/km + 90\' récup · ~6km', type: 'interval', km: 6 },
+      { id: 'w4s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w4s6', day: 'Sam', name: 'Tempo allure cible', detail: '4×10 min à 6\'10/km + 3\' récup · ~9km', type: 'tempo', km: 9 },
+      { id: 'w4s7', day: 'Dim', name: 'Jambes — Salle', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w5', num: 5, title: 'Construction IV', dates: '12–18 mai', badge: '~24km',
+    sessions: [
+      { id: 'w5s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w5s2', day: 'Mar', name: 'Endurance fondamentale', detail: '55 min à 6\'50/km · ~8km', type: 'run', km: 8 },
+      { id: 'w5s3', day: 'Mer', name: 'Jambes — Salle', type: 'gym' },
+      { id: 'w5s4', day: 'Jeu', name: 'Fractions VMA', detail: '4×1km à 5\'40/km + 2\' récup · ~6.5km', type: 'interval', km: 6.5 },
+      { id: 'w5s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w5s6', day: 'Sam', name: 'Tempo allure cible', detail: '2×20 min à 6\'10/km + 3\' récup · ~9.5km', type: 'tempo', km: 9.5 },
+      { id: 'w5s7', day: 'Dim', name: 'Jambes — Salle', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w6', num: 6, title: 'Intensification I', dates: '19–25 mai', badge: '~26km',
+    sessions: [
+      { id: 'w6s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w6s2', day: 'Mar', name: 'Endurance fondamentale', detail: '60 min à 6\'45/km · ~8.9km', type: 'run', km: 8.9 },
+      { id: 'w6s3', day: 'Mer', name: 'Jambes — Salle', type: 'gym' },
+      { id: 'w6s4', day: 'Jeu', name: 'Fractions VMA', detail: '5×1km à 5\'35/km + 2\' récup · ~7km', type: 'interval', km: 7 },
+      { id: 'w6s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w6s6', day: 'Sam', name: 'Tempo allure cible', detail: '2×20 min à 6\'05/km + 3\' récup · ~10km', type: 'tempo', km: 10 },
+      { id: 'w6s7', day: 'Dim', name: 'Jambes — Salle', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w7', num: 7, title: 'Intensification II', dates: '26 mai–1 juin', badge: '~27km',
+    sessions: [
+      { id: 'w7s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w7s2', day: 'Mar', name: 'Endurance fondamentale', detail: '65 min à 6\'40/km · ~9.7km', type: 'run', km: 9.7 },
+      { id: 'w7s3', day: 'Mer', name: 'Jambes — Salle', type: 'gym' },
+      { id: 'w7s4', day: 'Jeu', name: 'Fractions VMA', detail: '4×1km à 5\'30/km + 2\' récup · ~7km', type: 'interval', km: 7 },
+      { id: 'w7s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w7s6', day: 'Sam', name: 'Tempo 30 min', detail: '30 min continu à 6\'05/km · ~5km + échauffement', type: 'tempo', km: 7.5 },
+      { id: 'w7s7', day: 'Dim', name: 'Jambes — Salle', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w8', num: 8, title: '🔬 Semaine Test', dates: '2–8 juin', badge: 'test 8km',
+    sessions: [
+      { id: 'w8s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w8s2', day: 'Mar', name: '★ TEST 8km', detail: 'Allure libre — vise <6\'20/km. Note ton ressenti et ta moyenne finale !', type: 'run', km: 8 },
+      { id: 'w8s3', day: 'Mer', name: 'Jambes — Salle', type: 'gym' },
+      { id: 'w8s4', day: 'Jeu', name: 'Fractions VMA', detail: '4×1km à 5\'30/km + 2\' récup · ~7km', type: 'interval', km: 7 },
+      { id: 'w8s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w8s6', day: 'Sam', name: 'Tempo allure cible', detail: '2×15 min à 6\'00/km + 3\' récup · ~6km + échauffement', type: 'tempo', km: 8 },
+      { id: 'w8s7', day: 'Dim', name: 'Jambes — Salle', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w9', num: 9, title: 'Pic de forme', dates: '9–15 juin', badge: '~26km',
+    sessions: [
+      { id: 'w9s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w9s2', day: 'Mar', name: 'Endurance fondamentale', detail: '60 min à 6\'35/km · ~9km', type: 'run', km: 9 },
+      { id: 'w9s3', day: 'Mer', name: 'Jambes — Salle', type: 'gym' },
+      { id: 'w9s4', day: 'Jeu', name: 'Fractions VMA', detail: '5×800m à 5\'25/km + 90\' récup · ~6km', type: 'interval', km: 6 },
+      { id: 'w9s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w9s6', day: 'Sam', name: 'Tempo allure race', detail: '30 min à 6\'00/km pile · ~5km + échauffement', type: 'tempo', km: 8 },
+      { id: 'w9s7', day: 'Dim', name: 'Jambes — Salle', type: 'gym' },
+    ]
+  },
+  {
+    id: 'w10', num: 10, title: '✂️ Affûtage I', dates: '16–22 juin', badge: 'taper',
+    sessions: [
+      { id: 'w10s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w10s2', day: 'Mar', name: 'Footing doux', detail: '45 min à 6\'30/km · ~7km — rester frais', type: 'run', km: 7 },
+      { id: 'w10s3', day: 'Mer', name: 'Jambes légères', detail: 'Séance modérée — pas d\'épuisement', type: 'gym' },
+      { id: 'w10s4', day: 'Jeu', name: 'Fractions courtes', detail: '4×400m à 5\'30/km + 2\' récup · ~4km', type: 'interval', km: 4 },
+      { id: 'w10s5', day: 'Ven', name: 'Repos', type: 'rest' },
+      { id: 'w10s6', day: 'Sam', name: 'Tempo léger', detail: '3×8 min à 5\'55/km + 3\' récup · ~5km', type: 'tempo', km: 5 },
+      { id: 'w10s7', day: 'Dim', name: 'Repos actif', detail: 'Marche, étirements, récup', type: 'rest' },
+    ]
+  },
+  {
+    id: 'w11', num: 11, title: '✂️ Affûtage II — Semaine J', dates: '23–28 juin', badge: 'taper',
+    sessions: [
+      { id: 'w11s1', day: 'Lun', name: 'Repos', type: 'rest' },
+      { id: 'w11s2', day: 'Mar', name: 'Footing très léger', detail: '25 min très facile — jambes fraîches', type: 'run', km: 3.5 },
+      { id: 'w11s3', day: 'Mer', name: 'Jambes très légères', detail: 'Pas de charge lourde', type: 'gym' },
+      { id: 'w11s4', day: 'Jeu', name: 'Footing activation', detail: '20 min avec 3×2 min à 6\'00/km au milieu', type: 'run', km: 3 },
+      { id: 'w11s5', day: 'Ven', name: 'Repos complet', detail: 'Hydratation, sommeil, récup mentale', type: 'rest' },
+      { id: 'w11s6', day: 'Sam', name: 'Repos ou 15 min footing', detail: 'Très court si besoin de bouger', type: 'rest' },
+      { id: 'w11s7', day: '🏁 Dim 28 juin', name: '10KM — JOUR J', detail: 'Pars à 6\'05/km les 3 premiers km · Accélère à partir du km 6 si tu te sens bien', type: 'race', km: 10 },
+    ]
+  },
+];
+
+function loadProgress() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {}; } catch { return {}; }
+}
+
+function saveProgress(p) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+}
+
+function getTypeClass(type) {
+  return { run: 'dot-run', tempo: 'dot-tempo', interval: 'dot-interval', gym: 'dot-gym', rest: 'dot-rest', race: 'dot-race' }[type] || 'dot-rest';
+}
+
+function getTypeEmoji(type) {
+  return { run: '🏃', tempo: '⚡', interval: '🔥', gym: '🏋️', rest: '😴', race: '🏁' }[type] || '•';
+}
+
+function detectCurrentWeek() {
+  const today = new Date();
+  for (let i = 0; i < weeks.length; i++) {
+    const w = weeks[i];
+    if (w.id === 'w1') {
+      const s = new Date('2026-04-15');
+      const e = new Date('2026-04-20');
+      if (today >= s && today <= e) return i;
+    } else {
+      // rough check by week num
+      const startDay = new Date('2026-04-21');
+      startDay.setDate(startDay.getDate() + (i - 1) * 7);
+      const endDay = new Date(startDay);
+      endDay.setDate(endDay.getDate() + 6);
+      if (today >= startDay && today <= endDay) return i;
+    }
+  }
+  return -1;
+}
+
+function countdownDays() {
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  const race = new Date(RACE_DATE);
+  race.setHours(0,0,0,0);
+  return Math.max(0, Math.round((race - today) / 86400000));
+}
+
+function render() {
+  const progress = loadProgress();
+  const container = document.getElementById('weeks-container');
+  const currentWeekIdx = detectCurrentWeek();
+
+  let totalSessions = 0;
+  let totalDone = 0;
+  let totalRuns = 0;
+  let totalKm = 0;
+
+  container.innerHTML = '';
+
+  weeks.forEach((week, wIdx) => {
+    const weekDiv = document.createElement('div');
+    weekDiv.className = 'week-block';
+
+    const isCurrentWeek = wIdx === currentWeekIdx;
+    const allDone = week.sessions.every(s => progress[s.id]);
+
+    const badgeClass = week.badge === 'taper' ? 'badge-taper' : week.badge === 'test 8km' ? 'badge-test' : isCurrentWeek ? 'badge-current' : 'badge-volume';
+    const badgeLabel = isCurrentWeek && week.badge !== 'taper' ? '← MAINTENANT' : week.badge;
+
+    weekDiv.innerHTML = `
+      <div class="week-header ${isCurrentWeek ? 'current' : ''} ${allDone ? 'done-week' : ''}" onclick="toggleWeek('wb-${week.id}', '${week.id}-chev')">
+        <div class="week-left">
+          <span class="week-num">S${week.num}</span>
+          <div>
+            <div class="week-title-text">${week.title}</div>
+            <div class="week-dates">${week.dates}</div>
+          </div>
+        </div>
+        <div class="week-right">
+          <span class="week-badge ${badgeClass}">${badgeLabel}</span>
+          <span class="chevron" id="${week.id}-chev">▼</span>
+        </div>
+      </div>
+      <div class="week-body ${isCurrentWeek ? 'open' : ''}" id="wb-${week.id}">
+        ${week.sessions.map(s => {
+          totalSessions++;
+          if (s.km) { totalKm += s.km; }
+          if (s.type === 'run' || s.type === 'tempo' || s.type === 'interval' || s.type === 'race') totalRuns++;
+          const done = !!progress[s.id];
+          if (done) totalDone++;
+          return `
+          <div class="session-row ${done ? 'completed' : ''}" onclick="toggleSession('${s.id}')">
+            <div class="session-type-dot ${getTypeClass(s.type)}"></div>
+            <div class="session-content">
+              <div class="session-day">${s.day}</div>
+              <div class="session-name">${getTypeEmoji(s.type)} ${s.name}</div>
+              ${s.detail ? `<div class="session-detail">${s.detail}</div>` : ''}
+            </div>
+            <div class="session-checkbox">${done ? '✓' : ''}</div>
+          </div>`;
+        }).join('')}
+      </div>
+    `;
+
+    container.appendChild(weekDiv);
+  });
+
+  // Update header stats
+  document.getElementById('countdown').textContent = countdownDays();
+  const pct = Math.round((totalDone / totalSessions) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${totalDone} / ${totalSessions} séances`;
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('statDone').textContent = totalDone;
+  document.getElementById('statRuns').textContent = totalRuns;
+  document.getElementById('statKm').textContent = Math.round(totalKm);
+}
+
+function toggleWeek(bodyId, chevId) {
+  const body = document.getElementById(bodyId);
+  const chev = document.getElementById(chevId);
+  const open = body.classList.toggle('open');
+  chev.style.transform = open ? 'rotate(180deg)' : '';
+}
+
+function toggleSession(sessionId) {
+  const progress = loadProgress();
+  progress[sessionId] = !progress[sessionId];
+  saveProgress(progress);
+  render();
+}
+
+function resetAll() {
+  if (confirm('Réinitialiser toute la progression ?')) {
+    localStorage.removeItem(STORAGE_KEY);
+    render();
+  }
+}
+
+render();
+</script>
+
+</body>
+</html>
